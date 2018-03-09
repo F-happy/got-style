@@ -108,7 +108,10 @@ export default StyleSheet.create({
 ### layout 模块
 提供公共布局，例如控制布局的flex属性、通用的padding、margin、position定位。
 
-[flex 模块](./doc/flex.md)
+* [flex 模块](./doc/flex.md)
+* [margin 模块](./doc/margin.md)
+* [padding 模块](./doc/padding.md)
+* [absolute 模块](./doc/absolute.md)
 
 ```javascript
 demo：
