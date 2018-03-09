@@ -41,6 +41,71 @@ function flexLayout(direction, justify, align) {
   };
 }
 
+/**
+ * 过滤空值的属性
+ * @param source
+ * @returns {{}}
+ */
+function filterNullProperty(source = []) {
+  let props = {};
+  for (let i = 0; i < source.length; i++) {
+    let values = null;
+    for (let key in source[i]) {
+      if (Object.prototype.hasOwnProperty.call(source[i], key)) {
+        values = source[i][key];
+      }
+    }
+    if (values !== null) {
+      Object.assign(props, source[i]);
+    }
+  }
+  return props;
+}
+
+/**
+ * 为 margin padding 生成简写属性
+ * @param name
+ * @param args
+ * @returns {{}}
+ */
+function createShorthandProperties(name, args) {
+  let source = [];
+  switch (args.length) {
+    case 1:
+      source = [
+        { [`${name}Top`]: args[0] },
+        { [`${name}Right`]: args[0] },
+        { [`${name}Bottom`]: args[0] },
+        { [`${name}Left`]: args[0] },
+      ];
+      break;
+    case 2:
+      source = [
+        { [`${name}Vertical`]: args[0] },
+        { [`${name}Horizontal`]: args[1] },
+      ];
+      break;
+    case 3:
+      source = [
+        { [`${name}Top`]: args[0] },
+        { [`${name}Horizontal`]: args[1] },
+        { [`${name}Bottom`]: args[2] },
+      ];
+      break;
+    case 4:
+      source = [
+        { [`${name}Top`]: args[0] },
+        { [`${name}Right`]: args[1] },
+        { [`${name}Bottom`]: args[2] },
+        { [`${name}Left`]: args[3] },
+      ];
+      break;
+    default:
+      break;
+  }
+  return filterNullProperty(source);
+}
+
 /* ------------------------  以下方法和属性为对外公开的，使用者可以使用的  -------------------------------- */
 /**
  * 像素转DP
@@ -127,6 +192,34 @@ export const layout = {
     verticalBottomSpaceAround: flexLayout('column', 'space-around', 'flex-end'),
     verticalBottomStart: flexLayout('column', 'start', 'flex-end'),
     verticalBottomEnd: flexLayout('column', 'end', 'flex-end'),
+  },
+  // 这里的形参顺序遵循css中的 “上、右、下、左”
+  margin(...arg) {
+    return createShorthandProperties('margin', arg);
+  },
+  padding(...arg) {
+    return createShorthandProperties('padding', arg);
+  },
+  absolute(...arg) {
+    let source = [];
+    switch (arg.length) {
+      case 1:
+        source = [{ top: arg[0] }, { right: arg[0] }, { bottom: arg[0] }, { left: arg[0] }];
+        break;
+      case 2:
+        source = [{ top: arg[0] }, { right: arg[1] }, { bottom: arg[0] }, { left: arg[1] }];
+        break;
+      case 3:
+        source = [{ top: arg[0] }, { right: arg[1] }, { bottom: arg[2] }, { left: arg[1] }];
+        break;
+      case 4:
+        source = [{ top: arg[0] }, { right: arg[1] }, { bottom: arg[2] }, { left: arg[3] }];
+        break;
+      default:
+        break;
+    }
+    source.push({ position: 'absolute' });
+    return filterNullProperty(source);
   },
   extend: (key, value) => {
     extendPlugin(layout, key, value);
